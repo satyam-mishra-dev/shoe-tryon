@@ -24,20 +24,41 @@ async function initializeDeepar(effectName) {
   canvas.style.maxWidth = width + "px";
 
   // Initialize DeepAR (license key from .env).
+  const initialFacingMode = "environment";
   const deepAR = await deepar.initialize({
     licenseKey: process.env.DEEPAR_LICENSE_KEY,
     canvas: canvas,
     effect: `effects/${effectName}`, // The selected effect file.
     additionalOptions: {
       cameraConfig: {
-        facingMode: "environment", // Use the front camera.
+        facingMode: initialFacingMode,
       },
       hint: "footInit",
     }
-  }); 
+  });
+  // Expose for camera switch and track facing mode.
+  window.deepARInstance = deepAR;
+  window.deepARFacingMode = initialFacingMode;
+
   // Hide the loading screen.
   document.getElementById("loader-wrapper").style.display = "none";
-  brandText.style.display="flex";
+  brandText.style.display = "flex";
+
+  // Show and wire reverse camera button (tryon page only).
+  const reverseBtn = document.getElementById("reverse-camera-btn");
+  if (reverseBtn) {
+    reverseBtn.style.display = "block";
+    reverseBtn.addEventListener("click", function switchCamera() {
+      const current = window.deepARFacingMode;
+      const next = current === "environment" ? "user" : "environment";
+      window.deepARFacingMode = next;
+      deepAR.stopCamera();
+      deepAR.startCamera({
+        mediaStreamConstraints: { video: { facingMode: next } },
+      });
+    });
+  }
+
   // Register for a callback when feet are detected.
   deepAR.callbacks.onFeetTracked = (leftFoot, rightFoot) => {
     const feetText = document.getElementById("feet-text");

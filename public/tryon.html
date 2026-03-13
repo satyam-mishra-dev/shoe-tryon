@@ -28,9 +28,12 @@
   </nav>
 <body>
     <div class="container d-flex">
-        <div class="col">
+        <div class="col position-relative">
         <canvas class="deepar" id="deepar-canvas">
-        </canvas>       
+        </canvas>
+        <button type="button" id="reverse-camera-btn" class="btn btn-outline-light btn-sm position-absolute" style="bottom: 80px; left: 16px; z-index: 10; display: none;" title="Switch camera">
+          <iconify-icon icon="mdi:camera-switch" width="24" height="24"></iconify-icon>
+        </button>
         <div id="brand-text"><h4 style="margin: 0;">PerfectMatch</h4></div>
         <div id="loader-wrapper">
             <span class="loader"></span></span>
