@@ -22,8 +22,9 @@ AR virtual shoe try-on in the browser using [DeepAR](https://www.deepar.ai/) and
    - Name: `NEXT_PUBLIC_DEEPAR_LICENSE_KEY`
    - Value: your DeepAR license key (from [deepar.ai](https://www.deepar.ai/))
    - Apply to Production (and Preview if you want).
-3. Deploy. The license is baked in at **build time**, so the variable must be set before the build runs. If you see "DeepAR license not valid", add the env var and trigger a **new deployment** (Redeploy).
-4. If you see "Cannot find module './388.js'" or similar: clear build cache (Vercel → Deployments → ⋮ on latest → Redeploy with cleared cache), or locally run `rm -rf .next && npm run build`.
+3. Deploy. The license is baked in at **build time**, so the variable must be set before the build runs.
+4. **"License not valid" in production?** DeepAR keys are **tied to the domain**. If it works on localhost but not on Vercel, add your production domain in [DeepAR Developer Portal](https://developer.deepar.ai) → your project → your Web App → add the **domain only** (e.g. `your-app.vercel.app`, no `https://` or path). The same key then works for that domain.
+5. If you see "Cannot find module './388.js'" or similar: clear build cache (Vercel → Deployments → ⋮ on latest → Redeploy with cleared cache), or locally run `rm -rf .next && npm run build`.
 
 ## Tech
 
