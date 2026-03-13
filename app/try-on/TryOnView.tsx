@@ -1,25 +1,30 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PRODUCTS } from './products';
 
-const licenseKey = process.env.NEXT_PUBLIC_DEEPAR_LICENSE_KEY || '';
+// Read only in browser so it's the build-time value sent to the client (set in Vercel env and redeploy)
+function getLicenseKey(): string {
+  if (typeof window === 'undefined') return '';
+  return (process.env.NEXT_PUBLIC_DEEPAR_LICENSE_KEY as string) || '';
+}
 
 export default function TryOnView() {
-  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const deepARRef = useRef<Awaited<ReturnType<typeof import('deepar').initialize>> | null>(null);
   const [selectedEffect, setSelectedEffect] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [feetVisible, setFeetVisible] = useState(true);
   const [reverseBtnVisible, setReverseBtnVisible] = useState(false);
+  const [noLicense, setNoLicense] = useState(false);
   const facingModeRef = useRef<'environment' | 'user'>('environment');
 
   const initDeepAR = useCallback(
     async (effectName: string) => {
-      if (!canvasRef.current || !licenseKey) {
+      const licenseKey = getLicenseKey();
+      if (!canvasRef.current || !licenseKey || licenseKey.length < 10) {
         setLoading(false);
+        setNoLicense(true);
         return;
       }
       const canvas = canvasRef.current;
@@ -60,6 +65,7 @@ export default function TryOnView() {
       } catch (e) {
         console.error('DeepAR init error', e);
         setLoading(false);
+        setNoLicense(true);
       }
     },
     []
@@ -94,6 +100,19 @@ export default function TryOnView() {
     deepAR.stopCamera?.();
     deepAR.startCamera?.({ mediaStreamConstraints: { video: { facingMode: next } } });
   }, []);
+
+  if (noLicense) {
+    return (
+      <div className="container d-flex align-items-center justify-content-center min-vh-50 p-4">
+        <div className="alert alert-warning mb-0" style={{ maxWidth: 500 }}>
+          <strong>DeepAR license not configured.</strong>
+          <p className="mb-0 mt-2 small">
+            Set <code>NEXT_PUBLIC_DEEPAR_LICENSE_KEY</code> in your deployment (e.g. Vercel → Project → Settings → Environment Variables), then redeploy so the build includes it.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container d-flex">

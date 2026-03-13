@@ -18,8 +18,12 @@ AR virtual shoe try-on in the browser using [DeepAR](https://www.deepar.ai/) and
 ## Deploy on Vercel
 
 1. Push to GitHub and import the repo in Vercel.
-2. Add env var: `NEXT_PUBLIC_DEEPAR_LICENSE_KEY` = your DeepAR license key.
-3. Deploy. All routes (/, /get-info, /detail, /try-on, /privacy) work with client-side navigation.
+2. **Before the first deploy:** In Vercel → Project → Settings → Environment Variables, add:
+   - Name: `NEXT_PUBLIC_DEEPAR_LICENSE_KEY`
+   - Value: your DeepAR license key (from [deepar.ai](https://www.deepar.ai/))
+   - Apply to Production (and Preview if you want).
+3. Deploy. The license is baked in at **build time**, so the variable must be set before the build runs. If you see "DeepAR license not valid", add the env var and trigger a **new deployment** (Redeploy).
+4. If you see "Cannot find module './388.js'" or similar: clear build cache (Vercel → Deployments → ⋮ on latest → Redeploy with cleared cache), or locally run `rm -rf .next && npm run build`.
 
 ## Tech
 
