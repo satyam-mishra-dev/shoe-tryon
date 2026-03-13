@@ -18,6 +18,7 @@ export default function TryOnView() {
   const [reverseBtnVisible, setReverseBtnVisible] = useState(false);
   const [noLicense, setNoLicense] = useState(false);
   const [licenseErrorType, setLicenseErrorType] = useState<'missing' | 'invalid' | null>(null);
+  const [productsDrawerOpen, setProductsDrawerOpen] = useState(false);
   const facingModeRef = useRef<'environment' | 'user'>('environment');
 
   const initDeepAR = useCallback(
@@ -96,6 +97,7 @@ export default function TryOnView() {
       }
       setSelectedEffect(effectId);
       setLoading(true);
+      setProductsDrawerOpen(false); // close drawer on mobile so user sees camera
       initDeepAR(effectId);
     },
     [initDeepAR]
@@ -151,84 +153,155 @@ export default function TryOnView() {
     );
   }
 
-  return (
-    <div className="container d-flex">
-      <div className="col position-relative">
-        <canvas ref={canvasRef} className="deepar" id="deepar-canvas" />
-        {reverseBtnVisible && (
-          <button
-            type="button"
-            onClick={onReverseCamera}
-            className="btn btn-outline-light btn-sm position-absolute"
-            style={{ bottom: 80, left: 16, zIndex: 10 }}
-            title="Switch camera"
-          >
-            <iconify-icon icon="mdi:camera-switch" width="24" height="24" />
-          </button>
-        )}
-        <div id="brand-text" style={{ display: loading ? 'none' : 'flex' }}>
-          <h4 style={{ margin: 0 }}>PerfectMatch</h4>
-        </div>
-        {loading && (
-          <div id="loader-wrapper" style={{ display: 'block' }}>
-            <span className="loader" />
-          </div>
-        )}
-        {feetVisible && !loading && (
-          <h3 id="feet-text">Click the shoes and put your feet in picture</h3>
-        )}
-      </div>
-      <div className="col">
-        <div className="list-product album" style={{ marginTop: 100 }}>
-          <div className="container-fluid">
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-              {PRODUCTS.map((p) => (
-                <div key={p.id} className="col">
-                  <div
-                    className="product-card card"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => onProductClick(p.id)}
-                    onKeyDown={(e) => e.key === 'Enter' && onProductClick(p.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <span className="img-span">
-                      <img className="card-img-top" src={p.image} alt={p.name} />
-                    </span>
-                    <div style={{ flex: '1 1 auto', padding: '0rem 0.8rem' }}>
-                      <div className="d-flex justify-content-between align-items-center" style={{ marginTop: 5 }}>
-                        <div className="name-span">
-                          <p className="card-name">{p.name}</p>
-                        </div>
-                        <div className="btn-group group">
-                          <a
-                            className="cart-link d-flex"
-                            href={p.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <iconify-icon icon="material-symbols:info-outline" width="15" height="15" style={{ marginRight: 5, cursor: 'pointer' }} />
-                            <iconify-icon className="cartIcon" icon="pepicons-pop:cart" width="15" height="15" />
-                          </a>
-                        </div>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <a className="price">{p.price}</a>
-                        <div className="d-flex justify-content-md-between" style={{ marginTop: 5 }}>
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <iconify-icon key={i} icon="ic:outline-star" width="15" height="15" />
-                          ))}
-                        </div>
-                      </div>
+  const productCards = (
+    <div className="list-product album" style={{ marginTop: 0 }}>
+      <div className="container-fluid">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          {PRODUCTS.map((p) => (
+            <div key={p.id} className="col">
+              <div
+                className="product-card card"
+                role="button"
+                tabIndex={0}
+                onClick={() => onProductClick(p.id)}
+                onKeyDown={(e) => e.key === 'Enter' && onProductClick(p.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="img-span">
+                  <img className="card-img-top" src={p.image} alt={p.name} />
+                </span>
+                <div style={{ flex: '1 1 auto', padding: '0rem 0.8rem' }}>
+                  <div className="d-flex justify-content-between align-items-center" style={{ marginTop: 5 }}>
+                    <div className="name-span">
+                      <p className="card-name">{p.name}</p>
+                    </div>
+                    <div className="btn-group group">
+                      <a
+                        className="cart-link d-flex"
+                        href={p.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <iconify-icon icon="material-symbols:info-outline" width="15" height="15" style={{ marginRight: 5, cursor: 'pointer' }} />
+                        <iconify-icon className="cartIcon" icon="pepicons-pop:cart" width="15" height="15" />
+                      </a>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <a className="price">{p.price}</a>
+                    <div className="d-flex justify-content-md-between" style={{ marginTop: 5 }}>
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <iconify-icon key={i} icon="ic:outline-star" width="15" height="15" />
+                      ))}
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <div className="tryon-wrapper container d-flex">
+        <div className="col position-relative tryon-camera-col">
+          <canvas ref={canvasRef} className="deepar tryon-canvas" id="deepar-canvas" />
+          {reverseBtnVisible && (
+            <button
+              type="button"
+              onClick={onReverseCamera}
+              className="btn btn-outline-light btn-sm position-absolute"
+              style={{ bottom: 80, left: 16, zIndex: 10 }}
+              title="Switch camera"
+            >
+              <iconify-icon icon="mdi:camera-switch" width="24" height="24" />
+            </button>
+          )}
+          {/* Mobile: floating button to open product drawer */}
+          <button
+            type="button"
+            className="btn btn-primary position-absolute d-lg-none products-drawer-toggle"
+            style={{ bottom: 24, right: 16, zIndex: 10, borderRadius: 28, padding: '10px 16px', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+            onClick={() => setProductsDrawerOpen(true)}
+            aria-label="Open shoes"
+          >
+            <iconify-icon icon="mdi:shoe-sneaker" width="22" height="22" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Shoes
+          </button>
+          <div id="brand-text" style={{ display: loading ? 'none' : 'flex' }}>
+            <h4 style={{ margin: 0 }}>PerfectMatch</h4>
+          </div>
+          {loading && (
+            <div id="loader-wrapper" style={{ display: 'block' }}>
+              <span className="loader" />
+            </div>
+          )}
+          {feetVisible && !loading && (
+            <h3 id="feet-text">Click the shoes and put your feet in picture</h3>
+          )}
+        </div>
+        {/* Desktop: sidebar always visible */}
+        <div className="col tryon-products-col d-none d-lg-block">
+          <div style={{ marginTop: 100 }}>{productCards}</div>
+        </div>
+      </div>
+
+      {/* Mobile: collapsible bottom sheet for products */}
+      <div
+        className="products-drawer-backdrop d-lg-none"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: productsDrawerOpen ? 'rgba(0,0,0,0.4)' : 'transparent',
+          pointerEvents: productsDrawerOpen ? 'auto' : 'none',
+          zIndex: 1040,
+          transition: 'background-color 0.25s ease',
+        }}
+        onClick={() => setProductsDrawerOpen(false)}
+        aria-hidden={!productsDrawerOpen}
+      />
+      <div
+        className="products-drawer d-lg-none"
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          maxHeight: '75vh',
+          backgroundColor: '#fff',
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.2)',
+          zIndex: 1050,
+          transform: productsDrawerOpen ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform 0.3s ease-out',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+          <h5 className="mb-0">Choose a shoe</h5>
+          <button
+            type="button"
+            className="btn btn-link text-dark p-2"
+            onClick={() => setProductsDrawerOpen(false)}
+            aria-label="Close"
+          >
+            <iconify-icon icon="mdi:close" width="28" height="28" />
+          </button>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: 12 }} onClick={(e) => e.stopPropagation()}>
+          {productCards}
+        </div>
+      </div>
+    </>
   );
 }

@@ -3,3 +3,47 @@ body {
   margin-top: 50px;
   padding: 0;
 }
+
+/* Try-on: below lg = full-screen camera only, no sideline, products in drawer */
+@media (max-width: 991.98px) {
+  .tryon-wrapper {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .tryon-wrapper .tryon-camera-col {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 100vh;
+    padding: 0;
+  }
+  /* Hide products column completely so camera gets full width */
+  .tryon-wrapper .tryon-products-col {
+    display: none !important;
+    flex: 0 0 0 !important;
+    max-width: 0 !important;
+    width: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  /* Full-width camera, no left sideline */
+  .tryon-wrapper canvas.deepar.tryon-canvas,
+  .tryon-wrapper canvas.deepar {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .tryon-wrapper #feet-text {
+    left: 5%;
+    font-size: 1rem;
+  }
+  .tryon-wrapper #brand-text {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
