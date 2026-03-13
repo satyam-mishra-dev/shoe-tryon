@@ -119,20 +119,32 @@ export default function TryOnView() {
             {isInvalid ? 'DeepAR license not valid for this domain' : 'DeepAR license not configured'}
           </strong>
           {isInvalid ? (
-            <p className="mb-0 mt-2 small">
-              Your key works on localhost but DeepAR keys are <strong>tied to the domain</strong>. Add your production domain in the DeepAR dashboard:
-            </p>
-            <ol className="small mb-2 mt-2 ps-3">
-              <li>Go to <a href="https://developer.deepar.ai" target="_blank" rel="noopener noreferrer">developer.deepar.ai</a></li>
-              <li>Open your project → your Web App (or add a new Web App)</li>
-              <li>Add the <strong>domain only</strong>, e.g. <code>{typeof window !== 'undefined' ? window.location.hostname : 'your-app.vercel.app'}</code> (no https, no path)</li>
-              <li>Save. The same license key then works for this domain.</li>
-            </ol>
-            <p className="mb-0 small text-muted">If you use a custom domain, add that instead.</p>
+            <>
+              <p className="mb-0 mt-2 small">
+                Your key works on localhost but DeepAR keys are <strong>tied to the domain</strong>. Add your production domain in the DeepAR dashboard:
+              </p>
+              <ol className="small mb-2 mt-2 ps-3">
+                <li>Go to <a href="https://developer.deepar.ai" target="_blank" rel="noopener noreferrer">developer.deepar.ai</a></li>
+                <li>Open your project → your Web App (or add a new Web App)</li>
+                <li>Add the <strong>domain only</strong>, e.g. <code>{typeof window !== 'undefined' ? window.location.hostname : 'your-app.vercel.app'}</code> (no https, no path)</li>
+                <li>Save. The same license key then works for this domain.</li>
+              </ol>
+              <p className="mb-0 small text-muted">If you use a custom domain, add that instead.</p>
+            </>
           ) : (
-            <p className="mb-0 mt-2 small">
-              Set <code>NEXT_PUBLIC_DEEPAR_LICENSE_KEY</code> in your deployment (e.g. Vercel → Project → Settings → Environment Variables), then <strong>redeploy</strong> so the build includes it.
-            </p>
+            <>
+              <p className="mb-2 mt-2 small">
+                Set <code>NEXT_PUBLIC_DEEPAR_LICENSE_KEY</code> in Vercel → Project → Settings → Environment Variables.
+              </p>
+              <p className="mb-0 small">
+                <strong>Already set?</strong> The value is baked in at <strong>build time</strong>. You must:
+              </p>
+              <ol className="small mb-0 mt-1 ps-3">
+                <li>Ensure the variable is enabled for <strong>Production</strong></li>
+                <li>Trigger a <strong>new deployment</strong> (Deployments → ⋮ → Redeploy)</li>
+                <li>Optionally enable <strong>Clear build cache</strong> when redeploying</li>
+              </ol>
+            </>
           )}
         </div>
       </div>
