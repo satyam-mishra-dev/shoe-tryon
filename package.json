@@ -1,22 +1,24 @@
 {
   "name": "shoe-try-on",
   "version": "1.0.0",
-  "description": "DeepAR shoe-try-on demo.",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "build": "rm -rf dist && webpack --config webpack.config.js --mode production && cp -r public/* dist && cp -r node_modules/deepar dist/deepar-resources",
-    "dev": "webpack serve --mode development --open --port 8888"
-  },
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "dotenv": "^16.3.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.0"
+    "dev": "next dev",
+    "build": "cp -r node_modules/deepar public/deepar-resources 2>/dev/null || true && next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "bootstrap": "^5.3.2",
-    "deepar": "^5.0.0"
+    "deepar": "^5.0.0",
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.0.0"
   }
 }

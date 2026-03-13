@@ -1,0 +1,5 @@
+/* Base + load existing public styles via link in layout */
+body {
+  margin-top: 50px;
+  padding: 0;
+}
